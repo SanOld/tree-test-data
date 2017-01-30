@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<qqq>
+<shop>
+<name>Axiomplus.com.ua</name>
+<company>Axiomplus</company>
+<url>http://axiomplus.com.ua/</url>
+<categories>
+<category id="1531">Релейное оборудование2</category>
+<category id="1532">Реле контроля фаз</category>
+<category id="1533">Реле напряжения</category>
+<category id="1534">Таймеры</category>
+<category id="1535">Переключатели фаз</category>
+</categories>
+<currencies>
+<currency id="UAH" rate="1"/>
+</currencies>
+<offers>
+<offer available="true" id="2759">
+<url>
+https://axiomplus.com.ua/rele-kontrolya-faz/product-2759/
+</url>
+<name>Реле контроля фаз РНПП-311М, Новатек-Электро5</name>
+<price>484.50</price>
+<vendor>Новатек-Электро</vendor>
+<vendorCode>РНПП-311М</vendorCode>
+<currencyId>UAH</currencyId>
+<categoryId>1532</categoryId>
+<picture>
+https://axiomplus.com.ua/pub/media/catalog/product/p/r/product_preview2759_1.jpg
+</picture>
+<description/>
+</offer>
+<offer available="true" id="2760">
+<url>
+https://axiomplus.com.ua/rele-kontrolya-faz/product-2760/
+</url>
+<name>Реле контроля фаз РНПП-311, Новатек-Электро</name>
+<price>465.12</price>
+<vendor>Новатек-Электро</vendor>
+<vendorCode>РНПП-311</vendorCode>
+<currencyId>UAH</currencyId>
+<categoryId>1532</categoryId>
+<picture>
+https://axiomplus.com.ua/pub/media/catalog/product/r/n/rnpp-311_2_novatek-yelektro.jpg
+</picture>
+<description/>
+</offer>
+<offer available="true" id="2761">
+<url>
+https://axiomplus.com.ua/rele-kontrolya-faz/product-2761/
+</url>
+<name>Реле контроля фаз HRN-43/230V</name>
+<price>1664.28</price>
+<vendor>Elko-Ep</vendor>
+<vendorCode>HRN-43/230V</vendorCode>
+<currencyId>UAH</currencyId>
+<categoryId>1532</categoryId>
+<picture>
+https://axiomplus.com.ua/pub/media/catalog/product/h/r/hrn-43_1.jpg
+</picture>
+<description/>
+</offer>
+</offers>
+</shop>
+</qqq>
