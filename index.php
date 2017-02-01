@@ -203,6 +203,8 @@ for ($i = 1; $i < count($x1); $i++)
         <input type="hidden" name="count_quantity">
         <input type="submit" class="button" value="Пересчитать количество товаров">
     </form>
+  <?php if ($_SERVER['HTTP_HOST'] == 'cad5d.com.ua'){?>
+  
     <form action="" method="post" class="setting_form " id="formImportXML">
         <label for="">Прайс</label>
         <select name="price_id" id="price_id">
@@ -210,6 +212,8 @@ for ($i = 1; $i < count($x1); $i++)
         </select>
         <input type="submit" class="button" value="Обновить данные">
     </form>
+  
+  <?php } ?>  
     <div><label for="">Переключение языка</label>
     <select name="" id="change_language">
         <option value="ru">Русский</option>
