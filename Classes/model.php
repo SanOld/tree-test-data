@@ -443,11 +443,16 @@ class model extends db_pdo{
      * @return array
      */
     public function getCategories($lang = 'ru', $type = 0, $user_id = 1){
-
+      
         $cats = array();
 		
 		if ($type == 0) {	
-			$sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'" ORDER BY `order`';
+        if ($_SERVER['HTTP_HOST'] == 'cad5d.com.ua'){
+            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'"  ORDER BY `order`';
+        } else {
+            $name = 'axiomplus';
+            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'" AND name <> "'.$name.'" ORDER BY `order`';
+        }
 		}
 		else
 		{
