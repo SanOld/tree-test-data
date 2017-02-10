@@ -109,8 +109,13 @@ class model extends db_pdo{
     }
     
     public function addCategoryFromXML($root_category, $parent_id, $name,$lang,$sku, $price_id){
-        $ff = $this->db->query("INSERT INTO category SET root_category ='".$root_category."', parent_id ='".$parent_id."', name ='".$name."' ,`language` = '".$lang."',sku ='".$sku."',price_id ='".$price_id."'");
-        return $this->db->lastInsertId();
+
+        $result = $this->db->query("INSERT INTO category SET root_category ='".$root_category."', parent_id ='".$parent_id."', name ='".$name."' ,`language` = '".$lang."',sku ='".$sku."',price_id ='".$price_id."'");
+        if($result){
+          return $this->db->lastInsertId();
+        } else {
+          return false;
+        }
     }    
 
     public function deleteDataByPriceId($price_id, $lang){
@@ -447,7 +452,8 @@ class model extends db_pdo{
         $cats = array();
 		
 		if ($type == 0) {	
-        if ($_SERVER['HTTP_HOST'] == 'cad5d.com.ua'){
+//        if ($_SERVER['HTTP_HOST'] == 'widgets.online.cad5d.com.ua'){
+          if (true){
             $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'"  ORDER BY `order`';
         } else {
             $name = 'axiomplus';
@@ -781,7 +787,9 @@ class model extends db_pdo{
      * @return array
      */
     public function getProductsCount($category_id, $lang){
+      if($this->db->query("SHOW TABLES LIKE'products_".$lang."'")->fetch() != ''){
         $result = $this->db->query('SELECT COUNT(*) as product_cnt FROM products_'.$lang.' as pl LEFT JOIN products as p ON p.product_id = pl.id WHERE category_id = '.$category_id)->fetchAll(PDO::FETCH_ASSOC);
+      }
         return $result[0]['product_cnt'];
     }
 
@@ -815,8 +823,10 @@ class model extends db_pdo{
 
             $str = substr($str, 0, -2);
 
+            if($this->db->query("SHOW TABLES LIKE'products_".$lang."'")->fetch() != ''){
           //  $countResult = $this->db->query("SELECT COUNT(*) as product_cnt FROM products WHERE category_id IN ('.$ch_categories.')")->fetchAll(PDO::FETCH_ASSOC);
             $countResult = $this->db->query("SELECT COUNT(*) as product_cnt FROM products_".$lang." as pl LEFT JOIN products as p ON p.product_id = pl.product_id WHERE ".$str)->fetchAll(PDO::FETCH_ASSOC);
+            }
 
         }
 
