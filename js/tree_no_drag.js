@@ -324,6 +324,15 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		$menuItem.find('.saveTitle').css('display', 'inline-block');
 	});
 
+	$(document).on('click', '.addItem', function(){
+		var $menuItem = $(this).closest('div');
+
+    $(this).hide();
+		$menuItem.find('.editItem').show();
+    $menuItem.find('.saveItem').show();
+		$menuItem.find('.saveItem').css('display', 'inline-block');
+	});
+  
 	/**
 	 * запустить редактирование изображения
 	 */
@@ -515,7 +524,8 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			var rowData = {
 				'attributes' : data.product.attributes.split('::')
 			};
-
+      var price_block = '<span>Цена: </span><p><a href="'+data.product.vendor_link+'" target="_blank">' + data.product.price + " " + data.product.currency +'</a></p>';
+      
 			var components = '<p>' + i18next.t('tree_complect') + '</p><ul>';
 			for (var key in data.product.components) {
 				var product_name = data.product.components[key]['name'];
@@ -544,10 +554,10 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			var $tab = $('#tabs-content').find('div');
 
 			$tab.eq(0).html(img);
-			$tab.eq(1).html(template(rowData));
+			$tab.eq(1).html(rowData.attributes != '' ? template(rowData) : '');
 			$tab.eq(3).html(components);
 			$('#product_info_block').html(additional_materials);
-
+      $('#product_price_block').html(price_block);
 			$('[data-i18n]').localize();
 
 			$("table.optstable").sortTable();
@@ -602,14 +612,42 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
 		doAction('edit', {'id' : id, 'title' : title}, 'An error occurred while saving');
 	});
+  
+  	/**
+	 * обработчик сохранения
+	 */
+	$(document).on('click', '.saveItem', function(){
+		var field_id = $(this).attr('data-field');
+		var $list = $(this).closest('div');
+    
+    var title = $list.find('.editItem').val();
+    var $item = $('<li class="list-group-item">' + title + '</li>');
+    $list.find('ul').append( $item );
+    
+    $list.find('.addItem').show();
+		$list.find('.editItem').hide();
+    $list.find('.saveItem').hide();
+		$(this).css('display', 'none');
+
+		doAction('addItemToDictionary', {'field_id' : field_id, 'title': title, 'user_id': user_id }, 'An error occurred while saving',  null, function(data){
+      if(data){
+        $list.find('ul').append( $item );
+      } else {
+        alert('Соответствие не добавлено'); //TODO  MSG
+      }
+    });
+	});
 
 	/**
 	 * обработчик удаления заголовка категории
 	 */
 	$(document).on('click', '.deleteMenu', function(){
 		var id = $(this).attr('data-id');
-		doAction('delete', {'id' : id}, 'An error occurred while deleting');
-		$('#menuItem_'+id).remove();
+		var result = confirm('DELETE ?');
+		if (result) {
+			doAction('delete', {'id' : id}, 'An error occurred while deleting');
+			$('#menuItem_'+id).remove();
+		}	
 	});
 
 	/**
@@ -685,6 +723,24 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		});
 
 	});
+
+	/**
+	 * импортировать прайс пользователя
+	 */
+	$(document).on('click', '.import-price', function(){
+		var source   = $("#importCustomPrice").html();
+		var template = Handlebars.compile(source);
+    var data = dictionary_data;
+
+    $('.tests').empty().css('display','block').append(template(data) );
+	});
+
+
+
+
+
+
+
 
 	/*$(document).on('click', '.save', function(){
 		$('.tests').css('display','none');
@@ -1277,8 +1333,115 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		}
 	});
 
+	/**
+	 * загрузка файлов на сервер
+	 */
+	$(document).on('submit', '#formImportXML', function(e){
+		e.preventDefault();
+		$(document).find('.importError').remove('.importError');
+		var price_id = $("#price_id");
+    
+    if(price_id.val() != ''){
+      
+      $('#formImportXML').before('<img id="imgLoader" src="/img/loading1.gif">');
+      
+      var filedata = new FormData;
+      filedata.append('price_id', price_id.val());
+
+			$.ajax({
+				url: 'index.php?importXML=true',
+				data: filedata,
+				processData: false,
+				contentType: false,
+				type: 'post',
+//				dataType: 'json',
+				success: function (data) {
+          window.console.log(data);
+					if(data){
+		
+					}else{
+            errors('Ошибка при загрузке данных');
+					}
+          
+          $(document).find('#imgLoader').remove();
+				},
+				error: function(){
+          $(document).find('#imgLoader').remove();
+					errors('Ошибка при загрузке данных');
+				}
+			});
+    }
+
+	});
+  
+  	/**
+	 * загрузка файлов на сервер
+	 */
+	$(document).on('submit', '#formDictionary', function(e){
+		e.preventDefault();
+		
+		var $input = $("#file-upload");
+		var ext = $input.val().split('.');
+		ext = ext[ext.length-1].toLowerCase();
+    
+    var root_folder= $("#root_folder").val();
+    
+
+		if (ext =='xls' || ext =='xlt' || ext =='xlsx' || ext =='xla'){
+			var filedata = new FormData;
+			filedata.append('file', $input.prop('files')[0]);
+
+			$.ajax({
+				url: 'index.php?upload=true',
+				data: filedata,
+				processData: false,
+				contentType: false,
+				type: 'post',
+				dataType: 'json',
+				success: function (data) {
+
+					if(data.error.length != 0){
+						errors(data.error);
+					}else if(data.file == 'error'){
+						errors('Ошибка при загрузке файла');
+					}else{
+						var lang = $('#importLanguage').val();
+            doAction('saveCustomData', {'file' : data.file, 'lang' : lang, 'user_id': user_id, 'root_folder': root_folder}, 'An error occurred while loading', null, function(data){
+                rebuild_tree(lang,1, user_id);
+                $('.closeCustomPrice').trigger('click');
+            });
+					}
+				},
+				error: function(){
+					alert('error');
+				}
+			});
+
+		} else{
+			errors('Неправильный формат файла');
+		}
+	});
+
+	$(document).on('change', 'input#file-upload', function(){
+
+		var name = $(this).val().split('\\') || '';
+    name = name[name.length-1].toLowerCase();
+    if(name == ''){
+      name = 'Файл не выбран';
+    } 
+    $(this).closest('div').find('#file-selected').text(name);
+	});
 
 
+
+	/**
+	 * закрытие формы
+	 */
+	$(document).on('click', '.closeCustomPrice', function(){
+     $('.tests').html('');
+     $('.tests').css('display','none');
+	});
+  
 	/**
 	 * удаление компонента
 	 */
@@ -1614,6 +1777,7 @@ function rebuild_tree(lang, type, _G_USER_ID){
 			//$treeContent.eq(1).prepend('<button class="create-good button">Добавить товар</button>');
 			//$treeContent.eq(1).prepend('<input type="text" placeholder="Название категории"><button class="create-category button" data-type="1">Добавить Категорию</button>');
 			$treeContent.eq(1).prepend('<img class="collapse-all" src="img/toggle-collapse_blue.png" alt="">');
+      $treeContent.eq(1).prepend('<button class="import-price button" >Импорт</button>');
             $treeContent.eq(1).prepend('<button class="create-category button" data-type="1" data-i18n="AddFolder"></button>');
 			$treeContent.eq(1).prepend('<button class="create-good button" data-i18n="AddProductToTree"></button>');
 

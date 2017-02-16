@@ -8,6 +8,9 @@ body {
     font-family: Freesans, sans-serif;
     margin: 0;
 }
+*{
+  box-sizing: content-box;
+}
 /*
 div#tabs-content-1 ol#sort-cats-menu > li > div.menuDiv:first-child{
     background-image: url('../img/openClose.png');
@@ -23,7 +26,7 @@ div#tabs-content-1 ol#sort-cats-menu > li > div.menuDiv:first-child{
 }
 
 #tabs-headers{
-    position: fixed;
+    /*position: fixed;*/
     background-color: white;
     display: block;
     width: 330px;
@@ -250,6 +253,9 @@ li.mjs-nestedSortable-collapsed.mjs-nestedSortable-hovering div {
 }
 
 .editTitle {
+    display: none;
+}
+.editItem, .saveItem {
     display: none;
 }
 
@@ -574,6 +580,9 @@ table th.reversed.sorted:after {
 .divHide {
     display: none;
 }
+input.divHide {
+    display: none;
+}
 .center input{
     width: 140px;
 }
@@ -613,6 +622,7 @@ table th.reversed.sorted:after {
     height: 20px;
     position: relative;
     top: -3px;
+    
 }
 
 .collapse-all {
@@ -639,7 +649,7 @@ table th.reversed.sorted:after {
     margin-left: 95px;
 }
 #tabs-headers-1{
-    position: fixed;
+    /*position: fixed;*/
     padding-bottom: 10px;
     background-color: white;
 }
@@ -789,13 +799,14 @@ li.sertf{
     padding: 2px 2px 2px 2px;
     font-weight: bold;
 }
-.create-good,.create-category,.create-job, .save_and_edit, .save,.cancel{
+.create-good,.create-category,.create-job, .import-price, .save_and_edit, .save,.cancel{
     border: 1px solid #0BBFF2;
     border-radius: 0;
     background-color: #0BBFF2;
     background-image: none;
     color: white;
     box-shadow: none;
+     margin: 2px 2px;
 }
 .cancel{
     padding: 5px 5px;

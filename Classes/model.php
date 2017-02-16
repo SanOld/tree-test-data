@@ -452,13 +452,13 @@ class model extends db_pdo{
         $cats = array();
 		
 		if ($type == 0) {	
-//        if ($_SERVER['HTTP_HOST'] == 'widgets.online.cad5d.com.ua'){
-          if (true){
-            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'"  ORDER BY `order`';
-        } else {
-            $name = 'axiomplus';
-            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'" AND name <> "'.$name.'" ORDER BY `order`';
-        }
+		    if ($_SERVER['HTTP_HOST'] == 'cad5d.com.ua' || $_SERVER['HTTP_HOST'] == 'widgets.online.cableproject.net' || 
+		         $_SERVER['HTTP_HOST'] == 'widgets.online.cad5d.com.ua' ) {
+		            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'"  ORDER BY `order`';
+		        } else {
+		            $name = 'axiomplus';
+		            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'" AND name <> "'.$name.'" ORDER BY `order`';
+		        }
 		}
 		else
 		{

@@ -171,11 +171,7 @@ for ($i = 1; $i < count($x1); $i++)
    //xdomain = xdomain;
    //alert(xdomain);
    //xdomain = "local.online.cableproject.net";
-   
-   xdomain = 'tree-test-data';
    document.domain = xdomain;
-   
-   
    //document.addEventListener("dragend", function( event ) {
    //   // reset the transparency
    //   console.log('dragend');
@@ -196,13 +192,23 @@ for ($i = 1; $i < count($x1); $i++)
            placeholder="">
     <a href="#" class="gear"><img src="img/gear.png" alt=""/></a>
 </div>
+
+
 <?php if($settings['show_form'] == 1) { ?>
+
 
     <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post"
           class="setting_form ">
         <input type="hidden" name="count_quantity">
         <input type="submit" class="button" value="Пересчитать количество товаров">
     </form>
+  <?php  
+
+  //echo $_SERVER['HTTP_HOST'];
+  //exit;
+  //if ($_SERVER['HTTP_HOST'] == 'cad5d.com.ua' || $_SERVER['HTTP_HOST'] == 'widgets.online.cableproject.net' || 
+  //$_SERVER['HTTP_HOST'] == 'widgets.online.cad5d.com.ua' ) 
+  { ?>
   
     <form action="" method="post" class="setting_form " id="formImportXML">
         <label for="">Прайс</label>
@@ -211,8 +217,9 @@ for ($i = 1; $i < count($x1); $i++)
         </select>
         <input type="submit" class="button" value="Обновить данные">
     </form>
- 
-    <div><label for="">Переключение языка</label>
+  <?php } ?> 
+  
+  <div><label for="">Переключение языка</label>
     <select name="" id="change_language">
         <option value="ru">Русский</option>
         <option value="en">Английский</option>
