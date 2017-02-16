@@ -335,7 +335,7 @@ class Import extends model {
               $data['vendor'] = $offer->vendor;
               $data['vendor_link'] = $offer->url;
               $data['vendor_category'] = 10;
-              $data['sku'] = $offer->attributes()->id;
+              $data['sku'] = $offer->vendorCode;
               $data['vendor_photo_link'] = $offer->picture;
               $data['local_photo_link'] = $offer->picture;
               $data['quantity'] = '';
@@ -349,7 +349,7 @@ class Import extends model {
 
               $this->addProductFromXML($data, $lang, $categories);     
           }          
-          
+//          vendorCode
           return true;
         } else {
           return $out;
