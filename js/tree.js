@@ -53,21 +53,21 @@ var drag_data;
 // for now drag
 	function onstartdrag(e) {
 	   /*e.preventDefault(); e.stopPropagation();*/ // если раскоментить не будет начала драга
-       
+
 	   document.domain = xdomain; //"online.cableproject.net";
-		
+
 		//$('.products').attr({draggable: "true"});
 		//$('.products').bind("dragstart", onstartdrag);
 
 		//console.log('start drag on');
-		
+
 		if (e.originalEvent)
 		{
 			e.dataTransfer = e.originalEvent.dataTransfer;
-		}	
+		}
 		//console.log(e);
 		//e.dataTransfer.effectAllowed = 'move'; //'all';
-	
+
 		////e.dataTransfer.setData("Text", e.target.outerHTML);
 		drag_el = e.target;
 		//console.log(drag_el);
@@ -78,22 +78,31 @@ var drag_data;
 		var id = $($(drag_el).find('span')[0]).attr('data-id');
 		doAction_load('loadProductData', {'id' : id, 'lang' : window.lang}, 'An error occurred while loading', {dataType: "json"}, function(data){
 
-			e.dataTransfer.effectAllowed = 'move'; //'all';  
+			e.dataTransfer.effectAllowed = 'move'; //'all';
 
 			drag_data = JSON.stringify(data);
 			e.dataTransfer.setData("Text", drag_data);
 			//console.log(JSON.stringify(data));
 
 		});
-		
+
 		//parent.window.postMessage({message: {cmd: 'drag_data', data: e.target.outerHTML}}, '*');
-		
+
 		//$.event.props.push('dataTransfer');
 		//$("#dragover").html('<font color=#FF0000><b>WORK</b></font><br />event: <b>drop</b>');
      }
 
 
 $(document).ready(function(){
+
+var splitter = $('#outerContainer').split({
+    orientation: 'horizontal',
+    limit: 10,
+    position: '50%', // if there is no percentage it interpret it as pixels
+    onDrag: function(event) {
+//        console.log(splitter.position());
+    }
+});
 // for no_drag
 /*
 $('ul.products li').attr({draggable: "true"});
@@ -213,7 +222,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
 	$(document).on('click','.create-category',function(){
 		var type = $(this).data('type');
-        
+
 		var text_p = i18next.t('tree_addfolder');
 		var value = prompt(text_p, "");
         if(value != null && value.trim()!=""){
@@ -252,7 +261,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 /*
 	$('ul.products li').attr({draggable: "true"});
 	$('ul.products li').bind("dragstart", onstartdrag);
-	
+
     document.domain = xdomain; //"online.cableproject.net";
 */
 
@@ -341,7 +350,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
     $menuItem.find('.saveItem').show();
 		$menuItem.find('.saveItem').css('display', 'inline-block');
 	});
-  
+
 	/**
 	 * запустить редактирование изображения
 	 */
@@ -404,9 +413,9 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			setTimeout(function(data, i, product_id){
 				waitcategory(data, i, product_id);
 			}, 200, data, i, product_id);
-		} 
+		}
 		else
-		{	
+		{
 			var cnt = data['categories'].length;
 
 			if(data['categories'][cnt-1] == data['categories'][i]){
@@ -414,8 +423,8 @@ $('ul.products li').bind("dragstart", onstartdrag);
 				//alert(product_id);
 				if (product_id != undefined) {
 					G_LOCATE_product_id = product_id;
-				}	
-			}	
+				}
+			}
 
 			if($('[data-category_id= ' + data['categories'][i] +']').prev('img').length){
 				$('[data-category_id= ' + data['categories'][i] +']').prev().prev().click();
@@ -441,8 +450,8 @@ $('ul.products li').bind("dragstart", onstartdrag);
 				//}
 
 			}
-		}	
-	}	
+		}
+	}
 
 	function categoryClick(category_id, product_id){
 		doAction('getCategoryParent', {'category_id' : category_id}, 'An error occurred while loading', {dataType: "json"}, function(data) {
@@ -464,7 +473,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 					setTimeout(function(data, i, product_id){
 						waitcategory(data, i, product_id);
 					}, 200, data, i, product_id);
-				}	
+				}
 			}
 		});
 
@@ -495,7 +504,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 					} else
 					{
 						categoryClick(data['categories'][cnt-1]);
-					}	
+					}
 				}
 
 				/*
@@ -533,7 +542,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 				'attributes' : data.product.attributes.split('::')
 			};
       var price_block = '<span>Цена: </span><p><a href="'+data.product.vendor_link+'" target="_blank">' + data.product.price + " " + data.product.currency +'</a></p>';
-      
+
 			var components = '<p>' + i18next.t('tree_complect') + '</p><ul>';
 			for (var key in data.product.components) {
 				var product_name = data.product.components[key]['name'];
@@ -620,18 +629,18 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
 		doAction('edit', {'id' : id, 'title' : title}, 'An error occurred while saving');
 	});
-  
+
   	/**
 	 * обработчик сохранения
 	 */
 	$(document).on('click', '.saveItem', function(){
 		var field_id = $(this).attr('data-field');
 		var $list = $(this).closest('div');
-    
+
     var title = $list.find('.editItem').val();
     var $item = $('<li class="list-group-item">' + title + '</li>');
     $list.find('ul').append( $item );
-    
+
     $list.find('.addItem').show();
 		$list.find('.editItem').hide();
     $list.find('.saveItem').hide();
@@ -655,7 +664,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		if (result) {
 			doAction('delete', {'id' : id}, 'An error occurred while deleting');
 			$('#menuItem_'+id).remove();
-		}	
+		}
 	});
 
 	/**
@@ -705,12 +714,12 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			}).setHeader('<em> Добавить продукт </em> ').set('resizable', true).resizeTo('60%', '60%').show();*/
 
 		$('[data-i18n]').localize();
-		
+
 		if($('#category_add_product').val() != '001'){
 			$('#inputCategory').val($('#category_add_product').data('category_name'));
 		}
 		$(function() {
-			if ($('#inputCategory').attr('name') != undefined) { 
+			if ($('#inputCategory').attr('name') != undefined) {
 				var category_type = $('#tabs1').find('.active').data('page');
 				$.ajax({
 					url: 'index.php?get_categories=true&category_type='+category_type + '&user_id='+G_USER_ID,
@@ -727,7 +736,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 						};
 					}
 				});
-			}	
+			}
 		});
 
 	});
@@ -754,7 +763,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		$('.tests').css('display','none');
 	});*/
 
-  
+
 	/**
 	 * создать работу
 	 */
@@ -771,7 +780,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			'work_calc_types' : work_calc_types[window.lang],
 			'work_type_time' : work_type_time[window.lang]
 		};
-		
+
 		$('[data-i18n]').localize();
 
 		/*alertify.alert()
@@ -784,7 +793,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 */
 		$(function() {
 			var category_type = $('#tabs1').find('.active').data('page');
-			if ($('#inputCategory').attr('name') != undefined) { 
+			if ($('#inputCategory').attr('name') != undefined) {
 				$.ajax({
 					url: 'index.php?get_categories=true&category_type='+category_type + '&user_id='+G_USER_ID,
 					type: 'get',
@@ -801,7 +810,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
 					}
 				});
-			}	
+			}
 
 		});
 
@@ -1200,11 +1209,11 @@ $('ul.products li').bind("dragstart", onstartdrag);
 */
 
 				// такая же конструкция в popup.php
-				if (G_LOCATE_product_id != 0) 
+				if (G_LOCATE_product_id != 0)
 				{
 					console.log(G_LOCATE_product_id);
-					if ($('span[data-id=' + G_LOCATE_product_id + ']').length > 0)	
-					//if ($('span[data-find_id=' + G_LOCATE_product_id + ']').length > 0)	
+					if ($('span[data-id=' + G_LOCATE_product_id + ']').length > 0)
+					//if ($('span[data-find_id=' + G_LOCATE_product_id + ']').length > 0)
 					{
                         $('#tabs-content-1').children(0).animate( { scrollTop: 0 }, 1 );
                         setTimeout(function(){
@@ -1217,7 +1226,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
                         }, 100);
 					}
 					else {
-                        //alert('not found', G_LOCATE_product_id); 
+                        //alert('not found', G_LOCATE_product_id);
                         console.log('not found', G_LOCATE_product_id);
                         $('#tabs-content-1').children(0).animate( { scrollTop: 0 }, 1 );
                         setTimeout(function(){
@@ -1227,7 +1236,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 							$('#tabs-content-1').children(0).animate( { scrollTop: destination - 200 }, 100 );
                         }, 100);
 					}
-				}	
+				}
 
 
 				if($('#showForm').val() == 0){
@@ -1235,7 +1244,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 					$(document).find('.editProduct,.deleteProduct').remove();
 				}
 
-				$('[data-i18n]').localize();				
+				$('[data-i18n]').localize();
 
                 doAction('getProductsCountByCategory', {'category_id' : category_id, lang: lang}, 'An error occurred while loading', {dataType: "json"}, function(cnt) {
                     if (cnt > products_limit) {
@@ -1369,11 +1378,11 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		e.preventDefault();
 		$(document).find('.importError').remove('.importError');
 		var price_id = $("#price_id");
-    
+
     if(price_id.val() != ''){
-      
+
       $('#formImportXML').before('<img id="imgLoader" src="/img/loading1.gif">');
-      
+
       var filedata = new FormData;
       filedata.append('price_id', price_id.val());
 
@@ -1387,11 +1396,11 @@ $('ul.products li').bind("dragstart", onstartdrag);
 				success: function (data) {
           window.console.log(data);
 					if(data){
-		
+
 					}else{
             errors('Ошибка при загрузке данных');
 					}
-          
+
           $(document).find('#imgLoader').remove();
 				},
 				error: function(){
@@ -1402,19 +1411,19 @@ $('ul.products li').bind("dragstart", onstartdrag);
     }
 
 	});
-  
+
   	/**
 	 * загрузка файлов на сервер
 	 */
 	$(document).on('submit', '#formDictionary', function(e){
 		e.preventDefault();
-		
+
 		var $input = $("#file-upload");
 		var ext = $input.val().split('.');
 		ext = ext[ext.length-1].toLowerCase();
-    
+
     var root_folder= $("#root_folder").val();
-    
+
 
 		if (ext =='xls' || ext =='xlt' || ext =='xlsx' || ext =='xla'){
 			var filedata = new FormData;
@@ -1457,7 +1466,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
     name = name[name.length-1].toLowerCase();
     if(name == ''){
       name = 'Файл не выбран';
-    } 
+    }
     $(this).closest('div').find('#file-selected').text(name);
 	});
 
@@ -1470,7 +1479,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
      $('.tests').html('');
      $('.tests').css('display','none');
 	});
-  
+
 	/**
 	 * удаление компонента
 	 */
@@ -1506,7 +1515,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 	 */
 	function loadProductsByJSON(data, type){
 		type = type || data.product.type;
-			
+
 		var source   = $("#editProductTmpl").html();
 		var template = Handlebars.compile(source);
 
@@ -1531,11 +1540,11 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
 		//console.log(tplData);
 
-		if (data.product.type == 2) 
+		if (data.product.type == 2)
 			tplData.job = true;
-		else	
+		else
 			tplData.job = false;
-		
+
 		//console.log(data);
 
         //$('.tests').append(template);
@@ -1580,7 +1589,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
 			}
 		});
-		*/	
+		*/
 
 		var typo = 2;
 
@@ -1630,8 +1639,8 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			$('.component-list').append( template(data.product) );
 			totalSumComponent();
 		});
-		$('[data-i18n]').localize();				
-		
+		$('[data-i18n]').localize();
+
 	}
 
 	function totalSumComponent(){
@@ -1816,7 +1825,7 @@ function rebuild_tree(lang, type, _G_USER_ID){
 			$treeContent.eq(2).prepend('<img class="collapse-all" src="img/toggle-collapse_blue.png" alt="">');
             $treeContent.eq(2).prepend('<button class="create-category button" data-type="2" data-i18n="AddFolder"></button>');
             $treeContent.eq(2).prepend('<button class="create-job button" data-i18n="AddWorkItem"></button>');
-			
+
 		}
 
 		$('[data-i18n]').localize();
@@ -1985,7 +1994,7 @@ function loadViewProduct(){
 		$('ul.products li').attr({draggable: "true"});
 		$('ul.products li').bind("dragstart", onstartdrag);
 */
-		$('[data-i18n]').localize();				
+		$('[data-i18n]').localize();
 
 	})
 };
@@ -2003,9 +2012,9 @@ function loadUserProduct(type){
 		$('ul.products li').attr({draggable: "true"});
 		$('ul.products li').bind("dragstart", onstartdrag);
 */
-		
-		$('[data-i18n]').localize();				
-		
+
+		$('[data-i18n]').localize();
+
 	})
 };
 

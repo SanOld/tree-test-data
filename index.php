@@ -70,6 +70,7 @@ for ($i = 1; $i < count($x1); $i++)
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/alertify.min.css"/>
     <link rel="stylesheet" href="css/default.min.css"/>
+    <link rel="stylesheet" href="css/jquery.splitter.css"/>
     
 	<?php if ($settings['show_form'] != 0) {
 	?>
@@ -83,9 +84,11 @@ for ($i = 1; $i < count($x1); $i++)
 	<?php
 	}
 	?>
+    <script type="text/javascript" src="js/jquery.splitter-0.14.0.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.js"></script>
     <script type="text/javascript" src="js/handlebars-v4.0.5.js"></script>
+    
     
 
 	<?php if ($settings['show_form'] != 0) {
@@ -269,6 +272,8 @@ for ($i = 1; $i < count($x1); $i++)
 <?php } ?>
 <div class="loader"></div></div>
 
+ <div id="outerContainer">
+   <div>
 <section id="tree">
     <?php if ($tree_html) { ?>
         <div id="tabs1" class="tabs">
@@ -311,7 +316,7 @@ for ($i = 1; $i < count($x1); $i++)
 <input type="hidden" value="001" id="category_add_product">
 
 
-
+</div>
 <?php if ($tree_html) { ?>
     <div id="tabs2" class="tabs">
         <ul id="tabs-headers">
@@ -331,6 +336,9 @@ for ($i = 1; $i < count($x1); $i++)
         </div>
     </div>
 <?php } ?>
+
+
+ </div>
 <div class="tests" style="
     display: none;
     height: calc(95% - 330px);
