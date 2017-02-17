@@ -4,7 +4,7 @@ require_once('sphinx.php');
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Exception\DatabaseException;
 
-class sphinxModel extends db_sphinx{
+class SphinxModel extends db_sphinx{
 
     public function getSphinxSearchProducts($data)
     {

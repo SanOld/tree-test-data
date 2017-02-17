@@ -2,7 +2,7 @@
 
 require_once('vendor/autoload.php');
 
-use Foolz\SphinxQL\Connection;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 
 class db_sphinx {
 

@@ -592,7 +592,7 @@ class Tree extends model{
 				$categories[$key]['image'] = 'img/normal_folder.png';
 			}
 		}
-
+    if($categories && $products)
 		$json = array_merge($categories, $products);
 
 		return json_encode($json);

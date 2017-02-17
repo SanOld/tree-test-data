@@ -201,6 +201,30 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getStored();
 
         $this->assertCount(8, $result);
+
+        SphinxQL::create(self::$conn)->insert()
+            ->into('rt')
+            ->set(array(
+                'id' => 18,
+                'title' => 'a multi set test',
+                'content' => 'has text',
+                'gid' => 9002
+            ))
+            ->set(array(
+                'id' => 19,
+                'title' => 'and a',
+                'content' => 'second set call',
+                'gid' => 9003
+            ))
+            ->execute();
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(10, $result);
+
     }
 
     /**
@@ -508,6 +532,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getStored();
 
         $this->assertCount(2, $result);
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->match('')
+            ->compile()
+            ->getCompiled();
+
+        $this->assertEquals('SELECT * FROM rt WHERE MATCH(\'\')', $result);
     }
 
     public function testEscapeMatch()
@@ -624,10 +656,10 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $result);
         $this->assertEquals('2', $result[1]['cnt']);
 
-        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'))
+        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'), SphinxQL::expr('GROUPBY() gd'))
             ->from('rt')
             ->groupBy('gid')
-            ->having('gid', 304)
+            ->having('gd', 304)
             ->execute();
 
         $this->assertCount(1, $result);
@@ -898,6 +930,56 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
+    }
+
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::setSelect
+     */
+    public function testSetSelect()
+    {
+        $this->refill();
+        $q1 = SphinxQL::create(self::$conn)
+            ->select(array('id', 'gid'))
+            ->from('rt');
+        $q2 = clone $q1;
+        $q2->setSelect(array('id'));
+        $result = $q1
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayHasKey('gid', $result[0]);
+        $result = $q2
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+
+        $q1 = SphinxQL::create(self::$conn)
+            ->select('id', 'gid')
+            ->from('rt');
+        $q2 = clone $q1;
+        $q2->setSelect('id');
+        $result = $q1
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayHasKey('gid', $result[0]);
+        $result = $q2
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+    }
+
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::getSelect
+     */
+    public function testGetSelect()
+    {
+        $query = SphinxQL::create(self::$conn)
+            ->select('id', 'gid')
+            ->from('rt');
+        $this->assertEquals(array('id', 'gid'), $query->getSelect());
     }
 
     /**

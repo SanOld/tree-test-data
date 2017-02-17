@@ -460,7 +460,9 @@ class SphinxQL
                     $pre .= $this->escapeMatch($match['value']);
                 }
 
-                $matched[] = '('.$pre.')';
+                if ($pre !== '') {
+                    $matched[] = '('.$pre.')';
+                }
             }
 
             $matched = implode(' ', $matched);
@@ -502,7 +504,7 @@ class SphinxQL
 
         if (!empty($filter)) {
             if (strtoupper($filter['operator']) === 'BETWEEN') {
-                $query .= $this->getConnection()->quoteIdentifier($filter['column']);
+                $query .= $filter['column'];
                 $query .= ' BETWEEN ';
                 $query .= $this->getConnection()->quote($filter['value'][0]).' AND '
                     .$this->getConnection()->quote($filter['value'][1]).' ';
@@ -511,7 +513,7 @@ class SphinxQL
                 if ($filter['column'] === 'id') {
                     $query .= 'id ';
                 } else {
-                    $query .= $this->getConnection()->quoteIdentifier($filter['column']).' ';
+                    $query .= $filter['column'].' ';
                 }
 
                 if (in_array(strtoupper($filter['operator']), array('IN', 'NOT IN'), true)) {
@@ -538,7 +540,7 @@ class SphinxQL
             $query .= 'SELECT ';
 
             if (!empty($this->select)) {
-                $query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->select)).' ';
+                $query .= implode(', ', $this->select).' ';
             } else {
                 $query .= '* ';
             }
@@ -552,14 +554,14 @@ class SphinxQL
             } elseif ($this->from instanceof SphinxQL) {
                 $query .= 'FROM ('.$this->from->compile()->getCompiled().') ';
             } else {
-                $query .= 'FROM '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->from)).' ';
+                $query .= 'FROM '.implode(', ', $this->from).' ';
             }
         }
 
         $query .= $this->compileMatch().$this->compileWhere();
 
         if (!empty($this->group_by)) {
-            $query .= 'GROUP BY '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->group_by)).' ';
+            $query .= 'GROUP BY '.implode(', ', $this->group_by).' ';
         }
 
         if (!empty($this->within_group_order_by)) {
@@ -568,7 +570,7 @@ class SphinxQL
             $order_arr = array();
 
             foreach ($this->within_group_order_by as $order) {
-                $order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
+                $order_sub = $order['column'].' ';
 
                 if ($order['direction'] !== null) {
                     $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
@@ -590,7 +592,7 @@ class SphinxQL
             $order_arr = array();
 
             foreach ($this->order_by as $order) {
-                $order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
+                $order_sub = $order['column'].' ';
 
                 if ($order['direction'] !== null) {
                     $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
@@ -632,8 +634,7 @@ class SphinxQL
                     $option['value'] = $this->getConnection()->quote($option['value']);
                 }
 
-                $options[] = $this->getConnection()->quoteIdentifier($option['name'])
-                    .' = '.$option['value'];
+                $options[] = $option['name'].' = '.$option['value'];
             }
 
             $query .= 'OPTION '.implode(', ', $options).' ';
@@ -681,12 +682,12 @@ class SphinxQL
         }
 
         if (!empty($this->columns)) {
-            $query .= '('.implode(', ', $this->getConnection()->quoteIdentifierArr($this->columns)).') ';
+            $query .= '('.implode(', ', $this->columns).') ';
         }
 
         if (!empty($this->values)) {
             $query .= 'VALUES ';
-            $query_sub = '';
+            $query_sub = array();
 
             foreach ($this->values as $value) {
                 $query_sub[] = '('.implode(', ', $this->getConnection()->quoteArr($value)).')';
@@ -722,10 +723,10 @@ class SphinxQL
             foreach ($this->set as $column => $value) {
                 // MVA support
                 if (is_array($value)) {
-                    $query_sub[] = $this->getConnection()->quoteIdentifier($column)
+                    $query_sub[] = $column
                         .' = ('.implode(', ', $this->getConnection()->quoteArr($value)).')';
                 } else {
-                    $query_sub[] = $this->getConnection()->quoteIdentifier($column)
+                    $query_sub[] = $column
                         .' = '.$this->getConnection()->quote($value);
                 }
             }
@@ -812,6 +813,37 @@ class SphinxQL
         }
 
         return $this;
+    }
+
+    /**
+     * Alters which arguments to select
+     *
+     * Query is assumed to be in SELECT mode
+     * See select() for usage
+     *
+     * @param array|string $columns Array or multiple string arguments containing column names
+     *
+     * @return SphinxQL
+     */
+    public function setSelect($columns = null)
+    {
+        if (is_array($columns)) {
+            $this->select = $columns;
+        } else {
+            $this->select = \func_get_args();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the columns staged to select
+     *
+     * @return array
+     */
+    public function getSelect()
+    {
+        return $this->select;
     }
 
     /**
@@ -1180,8 +1212,12 @@ class SphinxQL
      */
     public function set($array)
     {
-        foreach ($array as $key => $item) {
-            $this->value($key, $item);
+        if ($this->columns === array_keys($array)) {
+            $this->values($array);
+        } else {
+            foreach ($array as $key => $item) {
+                $this->value($key, $item);
+            }
         }
 
         return $this;
@@ -1319,6 +1355,7 @@ class SphinxQL
         $this->having = array();
         $this->order_by = array();
         $this->offset = null;
+        $this->limit = null;
         $this->into = null;
         $this->columns = array();
         $this->values = array();

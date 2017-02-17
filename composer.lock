@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "foolz/sphinxql-query-builder",
-            "version": "1.0.2",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FoolCode/SphinxQL-Query-Builder.git",
-                "reference": "36bec6b37b8fddf5165f96cad14c544912a6f3ba"
+                "reference": "dd8fc0370fb30919447056563c8c66ea0ff74075"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FoolCode/SphinxQL-Query-Builder/zipball/36bec6b37b8fddf5165f96cad14c544912a6f3ba",
-                "reference": "36bec6b37b8fddf5165f96cad14c544912a6f3ba",
+                "url": "https://api.github.com/repos/FoolCode/SphinxQL-Query-Builder/zipball/dd8fc0370fb30919447056563c8c66ea0ff74075",
+                "reference": "dd8fc0370fb30919447056563c8c66ea0ff74075",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "sphinxql",
                 "sql"
             ],
-            "time": "2016-02-27 02:55:09"
+            "time": "2016-12-15 13:51:59"
         }
     ],
     "packages-dev": [],
