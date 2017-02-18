@@ -2,6 +2,7 @@
 require_once('sphinx.php');
 
 use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Exception\DatabaseException;
 
 class SphinxModel extends db_sphinx{
@@ -16,13 +17,14 @@ class SphinxModel extends db_sphinx{
             try {
                 $products = SphinxQL::create($this->sphinx)->select($select)
                     ->from(["product_{$data['lang']}"])
-                    ->match(['name','description', 'vendor_category'], $search);
+                    ->match(['name','description', 'vendor_category','sku'], $search);
                 if(isset($data['type']) && $data['type'] == '0'){
-                    $products->where('type', 0);
+                    $products->where('type','=', 0);
                 }
                 if(isset($data['type']) && $data['type'] == '1'){
                     $products->where('type', '!=', 0);
                 }
+
                 $products->limit($limit);
 
                 $result = $products->execute();
@@ -69,6 +71,6 @@ class SphinxModel extends db_sphinx{
      * @return array|null
      */
     private function getSphinxResultOrNull($result){
-        return !empty($result) ? $result : array();
+        return !empty($result) ? $result->fetchAllAssoc() : array();
     }
 }
