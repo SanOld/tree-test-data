@@ -67,7 +67,7 @@ div#tabs-content-1 ol#sort-cats-menu > li > div.menuDiv:first-child{
 }
 .tab-piece {
     width: 330px;
-    height: 200px;
+    max-height: 700px;
     font-size: 11px;
     margin-top: 35px;
     overflow: auto;
@@ -158,6 +158,15 @@ small code {
 #tree {
     width: 330px;
     margin: 0;
+    max-height: 700px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+#outerContainer {
+    width: 330px;
+    margin: 0;
+    height: 500px;
     max-height: 500px;
     overflow-y: auto;
     overflow-x: auto;

@@ -49,7 +49,7 @@ var drag_data;
 
 	function onstartdrag(e) {
 	   /*e.preventDefault(); e.stopPropagation();*/ // если раскоментить не будет начала драга
-       
+       //console.log('start drag');
 	   document.domain = xdomain; //"online.cableproject.net";
 		
 		//$('.products').attr({draggable: "true"});
@@ -90,6 +90,15 @@ var drag_data;
 
 
 $(document).ready(function(){
+
+var splitter = $('#outerContainer').split({
+    orientation: 'horizontal',
+    limit: 10,
+    position: '50%', // if there is no percentage it interpret it as pixels
+    onDrag: function(event) {
+//        console.log(splitter.position());
+    }
+});
 $('ul.products li').attr({draggable: "true"});
 $('ul.products li').bind("dragstart", onstartdrag);
 
@@ -187,9 +196,18 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			append('<a><img src="'+ item.image +'" 	onerror='+default_img+' alt="" width="50px"><span class="category_auto">' + item.category_name + "</span>" + ' - ' + item.label + '</a>').
 			appendTo(ul);
 			} else {
-			return $("<li>").data("ui-autocomplete-item", item).
+			var res = $("<li>").data("ui-autocomplete-item", item).
 			append('<a><img src="'+ item.image +'" 	onerror='+default_img+' alt="" width="50px"><span class="category_auto">' + item.category_name + "</span>" + ' - ' + item.label + ' - ' + item.sku + '</a>').
 			appendTo(ul);
+			/* если ul - не хочет начинать драгить, если ol сделать - то драг начинается но уже список не так себя ведет
+			$('ul.ui-autocomplete li').attr({draggable: "true"});
+			$('ul.ui-autocomplete li').bind("dragstart", onstartdrag);
+			$('ul.ui-autocomplete a').attr({draggable: "true"});
+			$('ul.ui-autocomplete a').bind("dragstart", onstartdrag);
+			$('ul.ui-autocomplete img').attr({draggable: "true"});
+			$('ul.ui-autocomplete img').bind("dragstart", onstartdrag);
+			*/
+			return res;
 		}
 
 	};
