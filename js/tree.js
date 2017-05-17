@@ -283,7 +283,17 @@ $('ul.products li').bind("dragstart", onstartdrag);
 	$('.disclose').attr('title','Click to show/hide children');
 	$('.deleteMenu').attr('title', 'Click to delete item.');
 
+  $(document).on('change', '.category_id_search', function() {
+    
 
+    if ( ! $(this).prop.checked ){
+
+      $(this).val( false );
+
+    }
+
+
+  })
 	/**
 	 * обработчик сворачивания/разворачивания дерева
 	 */

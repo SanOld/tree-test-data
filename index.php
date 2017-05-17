@@ -198,7 +198,7 @@ for ($i = 1; $i < count($x1); $i++)
     <div class="clearfix"></div>
     <div class="">
       <label>
-        <input type="checkbox" class = "category_id_search" value="">
+        <input type="checkbox" class = "category_id_search" value="false">
         Поиск по текущему каталогу
       </label>
     </div>
