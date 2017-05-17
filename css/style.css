@@ -798,3 +798,12 @@ li.sertf{
     margin: 2px 2px;
 }
 
+div .category_id_search{
+    margin-left: 15px;
+}
+
+div .selected{
+  border: 1px solid #98D337;
+  border-radius: 0;
+}
+

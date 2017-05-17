@@ -95,6 +95,8 @@ var drag_data;
 
 $(document).ready(function(){
 
+$('.category_id_search').val(false);
+
 var splitter = $('#outerContainer').split({
     orientation: 'horizontal',
     limit: 10,
@@ -158,7 +160,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			$.ajax({
 				url: 'index.php?searchProduct=true',
 				type: 'post',
-				data: { search : request, category: $('#search_category').val() ,lang :  window.lang , type : $('#search_type').val() },
+				data: { search : request, category: $('#search_category').val(), category_id: $('.category_id_search').val() ,lang :  window.lang , type : $('#search_type').val() },
 				dataType: 'json',
 				success: function(json) {
 					response($.map(json, function(item) {
@@ -218,9 +220,9 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		$('.productTitle.find_product').removeClass('find_product');
 		$(this).find('.productTitle').addClass('find_product');
 	//	$('.productTitle.find_product').eq(0).trigger('click');
-	})
-
+	});
 	$(document).on('click','.create-category',function(){
+    
 		var type = $(this).data('type');
 
 		var text_p = i18next.t('tree_addfolder');
@@ -281,6 +283,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 	$('.disclose').attr('title','Click to show/hide children');
 	$('.deleteMenu').attr('title', 'Click to delete item.');
 
+
 	/**
 	 * обработчик сворачивания/разворачивания дерева
 	 */
@@ -289,7 +292,19 @@ $('ul.products li').bind("dragstart", onstartdrag);
         var id = this.id;
 
         $(this).closest('li').toggleClass('mjs-nestedSortable-collapsed').toggleClass('mjs-nestedSortable-expanded');
-		$(this).toggleClass('ui-icon-plusthick').toggleClass('ui-icon-minusthick');
+        $(this).toggleClass('ui-icon-plusthick').toggleClass('ui-icon-minusthick');
+
+        
+        $('body').find('div.selected').removeClass('selected');
+
+        //для поиска по каталогу записываем id раскрытой папки
+        if( $(this).hasClass('ui-icon-minusthick') ){
+          $('.category_id_search').val( id );
+          $(this).closest('div').addClass('selected');
+        } else {
+          $('.category_id_search').val( false );
+          $(this).closest('div').removeClass('selected');
+        }
 
         var that = $('#menuDiv_'+id);
         if (!this.hasAttribute("childLoaded")) {

@@ -575,7 +575,7 @@ class Tree extends model{
 				return $arr['id'];
 			},$products);
 			$products = implode(',',$products);
-			$products = $this->getSphinxProducts($products, $data['lang']);
+			$products = $this->getSphinxProducts($products, $data['lang'], $data['category_id']);
 		}
 
 		if (!empty($categories)) {

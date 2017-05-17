@@ -968,7 +968,7 @@ class model extends db_pdo{
         return json_encode($tree);
     }
 
-	public function getSphinxProducts($ids, $lang)
+	public function getSphinxProducts($ids, $lang, $category = '*')
     {
         $sql = "SELECT
                 *,
@@ -981,7 +981,7 @@ class model extends db_pdo{
             LEFT JOIN
                 products as p USING(product_id)
             WHERE
-                p.product_id IN ({$ids})";
+                p.product_id IN ({$ids}) AND p.category_id = {$category}";
 
         $result = $this->db->query($sql);
 

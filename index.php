@@ -194,9 +194,17 @@ for ($i = 1; $i < count($x1); $i++)
     <input id="job_product_search" type="search" data-i18n="[placeholder]searchProducts"
            placeholder="">
     <a href="#" class="gear"><img src="img/gear.png" alt=""/></a>
+
+    <div class="clearfix"></div>
+    <div class="">
+      <label>
+        <input type="checkbox" class = "category_id_search" value="">
+        Поиск по текущему каталогу
+      </label>
+    </div>
+   
 </div>
-
-
+  
 <?php if($settings['show_form'] == 1) { ?>
 
 
