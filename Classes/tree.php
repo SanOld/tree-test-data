@@ -564,7 +564,7 @@ class Tree extends model{
 		 * если не передан поисковый запрос
 		 */
 		if (empty(trim($data['search']['term']))) {
-			return json_encode($json);
+			return json_encode( $json );
 		}
 
 		$products = (new SphinxModel)->getSphinxSearchProducts($data);
@@ -574,7 +574,7 @@ class Tree extends model{
 			$products = array_map(function ($arr){
 				return $arr['id'];
 			},$products);
-			$products = implode(',',$products);
+//			$products = implode(',',$products);
 			$products = $this->getSphinxProducts($products, $data['lang'], $data['category_id']);
 		}
 
@@ -582,8 +582,8 @@ class Tree extends model{
 			$categories = array_map(function ($arr){
 				return $arr['id'];
 			},$categories);
-			$categories = implode(',',$categories);
-			$categories = $this->getSphinxCategories($categories);
+//			$categories = implode(',',$categories);
+			$categories = $this->getSphinxCategories($categories, $data['category_id']);
 
 			foreach ($categories as $key => $category) {
 				$tmp_cat = $this->getRootName($category['root_category']);

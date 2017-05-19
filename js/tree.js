@@ -44,6 +44,7 @@ var lang = $('#current_language').val();
 var user_id = G_USER_ID; // 1
 var products_limit = 10;
 var products_page = 1;
+var current_category = '*';
 // for no_drag
 /*
 var drag_el;
@@ -95,7 +96,7 @@ var drag_data;
 
 $(document).ready(function(){
 
-$('.category_id_search').val(false);
+$('.category_id_search').val( current_category );
 
 var splitter = $('#outerContainer').split({
     orientation: 'horizontal',
@@ -285,13 +286,15 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
   $(document).on('change', '.category_id_search', function() {
     
+    if ( $(this).prop('checked') ){
 
-    if ( ! $(this).prop.checked ){
+      $(this).val( current_category );
 
-      $(this).val( false );
+    } else {
 
+      $(this).val( "*" );
+      
     }
-
 
   })
 	/**
@@ -309,10 +312,12 @@ $('ul.products li').bind("dragstart", onstartdrag);
 
         //для поиска по каталогу записываем id раскрытой папки
         if( $(this).hasClass('ui-icon-minusthick') ){
-          $('.category_id_search').val( id );
+          current_category = id ;
+          $('.category_id_search').prop('checked') ? $('.category_id_search').val( id ) : $('.category_id_search').val( '*' );
           $(this).closest('div').addClass('selected');
         } else {
-          $('.category_id_search').val( false );
+          current_category = '*' ;
+          $('.category_id_search').val( '*' );
           $(this).closest('div').removeClass('selected');
         }
 

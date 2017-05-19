@@ -110,7 +110,10 @@ class model extends db_pdo{
     
     public function addCategoryFromXML($root_category, $parent_id, $name,$lang,$sku, $price_id){
 
-        $result = $this->db->query("INSERT INTO category SET root_category ='".$root_category."', parent_id ='".$parent_id."', name ='".$name."' ,`language` = '".$lang."',sku ='".$sku."',price_id ='".$price_id."'");
+        $sql = "INSERT INTO category SET `root_category` ='".$root_category."', `parent_id` ='".$parent_id."', `name` ='".$name."' ,`language` = '".$lang."',`sku` ='".$sku."',`price_id` ='".$price_id."'";
+
+        $result = $this->db->query( $sql );
+
         if($result){
           return $this->db->lastInsertId();
         } else {
@@ -835,7 +838,7 @@ class model extends db_pdo{
 
     public function getRootName($category_id)
     {
-        $result = $this->db->query("SELECT *  FROM category WHERE category_id = ".$category_id);
+        $result = $this->db->query("SELECT *  FROM category WHERE category_id = '".$category_id."'");
         return $this->getResultOrNull($result,true);
     }
     public function getParentsCategory()
@@ -968,40 +971,114 @@ class model extends db_pdo{
         return json_encode($tree);
     }
 
-	public function getSphinxProducts($ids, $lang, $category = '*')
+	public function getSphinxProducts($ids, $lang, $category_id = '*')
     {
-        $sql = "SELECT
+
+    $response = array();
+
+    foreach ($ids as $product_id) {
+      $sql_1 = "SELECT
                 *,
                 p.product_id as id,
                 pl.name as label,
                 pl.name as relev,
-                p.vendor_category as score
+                p.vendor_category as score,
+                p.category_id as category_id
             FROM
                 products_{$lang} as pl
             LEFT JOIN
                 products as p USING(product_id)
             WHERE
-                p.product_id IN ({$ids}) AND p.category_id = {$category}";
+                ( p.product_id = {$product_id} )" ;
 
-        $result = $this->db->query($sql);
+                
+      $result = $this->db->query($sql_1);
+      $response_1 = $this->getResultOrNull($result);
+      $prod_category_id = $response_1[0][category_id];
 
-        return $this->getResultOrNull($result);
+      $categories = $this->getAncestorsCategories( $prod_category_id,  array() );
+      if( $category_id != "*" ){
+
+        $categories[] = $prod_category_id;
+
+      }
+
+      if (in_array( $category_id, $categories) || $category_id == '*' ){
+        $response = array_merge( $response, $response_1 );
+      }
+
+
+     }
+
+        return $response;
     }
 	
-	public function getSphinxCategories($data)
+	public function getSphinxCategories($data, $parent_category = '*')
     {
-        $sql = "SELECT
+
+    $response = array();
+    
+    foreach ($data as $cat_id) {
+      $categories = $this->getAncestorsCategories( $cat_id,  array() );
+      if( $parent_category != "*" ){
+
+        $categories[] = $cat_id;
+      }
+
+      if (in_array( $parent_category, $categories) || $parent_category == '*' ){
+        $sql_1 = "SELECT
                 *,
                 name as label,
                 category_id as id
             FROM
                 category
              WHERE
-                category_id IN ({$data})";
+                category_id = {$cat_id}";
 
-        $result = $this->db->query($sql);
+         $result = $this->db->query($sql_1);
+         $response_1 = $this->getResultOrNull($result);
 
-        return $this->getResultOrNull($result);
-    }	
+         $response = array_merge( $response, $response_1 );
+      }
+
+     }
+
+        return $response;
+
+//    $limit = 5;
+//
+//        $sql = "SELECT
+//                *,
+//                name as label,
+//                category_id as id
+//            FROM
+//                category
+//             WHERE
+//                category_id IN ({$data})";
+//
+//
+//            if( $parent_category != '*') {
+//              $sql .= " AND category.parent_id = '{$parent_category}'";
+//            }
+//
+////             $sql .= " LIMIT {$limit}";
+//
+//        $result = $this->db->query($sql);
+//
+//        return $this->getResultOrNull($result);
+    }
+
+  public function getAncestorsCategories( $category_id, $categories = array() )  {
+
+    $sql = "SELECT parent_id from category where category_id ='{$category_id}'";
+    $result = $this->db->query($sql);
+    $category_id = $this->getResultOrNull($result);
+
+    if( $category_id && $category_id[0][parent_id] != 0){
+      $categories[] = $category_id[0][parent_id];
+      $categories = $this->getAncestorsCategories( $category_id[0][parent_id], $categories );
+    }
+    return $categories;
+  }
 
 } ?>

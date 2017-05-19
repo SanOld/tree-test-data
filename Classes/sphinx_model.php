@@ -25,7 +25,7 @@ class SphinxModel extends db_sphinx{
                     $products->where('type', '!=', 0);
                 }
 
-                $products->limit($limit);
+//                $products->limit($limit);
 
                 $result = $products->execute();
 
@@ -56,7 +56,7 @@ class SphinxModel extends db_sphinx{
             if(isset($data['type']) && $data['type'] == '1'){
                 $categories->where('type', '!=', 0);
             }
-            $categories->limit($limit);
+//            $categories->limit($limit);
 
             $result = $categories->execute();
 
