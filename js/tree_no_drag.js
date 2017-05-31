@@ -44,12 +44,14 @@ var lang = $('#current_language').val();
 var user_id = G_USER_ID; // 1
 var products_limit = 10;
 var products_page = 1;
+var current_category = '*';
 var drag_el;
 var drag_data;
 
 	function onstartdrag(e) {
 	   /*e.preventDefault(); e.stopPropagation();*/ // если раскоментить не будет начала драга
        //console.log('start drag');
+	   window.ui_autocomplete_cl = false;
 	   document.domain = xdomain; //"online.cableproject.net";
 		
 		//$('.products').attr({draggable: "true"});
@@ -72,6 +74,8 @@ var drag_data;
 			drag_el = drag_el.parentNode;
 		}
 		var id = $($(drag_el).find('span')[0]).attr('data-id');
+		if (id == undefined)
+			id = $(drag_el).attr('data-id');
 		doAction_load('loadProductData', {'id' : id, 'lang' : window.lang}, 'An error occurred while loading', {dataType: "json"}, function(data){
 
 			e.dataTransfer.effectAllowed = 'move'; //'all';  
@@ -90,6 +94,8 @@ var drag_data;
 
 
 $(document).ready(function(){
+
+$('.category_id_search').val( current_category );
 
 var splitter = $('#outerContainer').split({
     orientation: 'horizontal',
@@ -152,7 +158,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			$.ajax({
 				url: 'index.php?searchProduct=true',
 				type: 'post',
-				data: { search : request, category: $('#search_category').val() ,lang :  window.lang , type : $('#search_type').val() },
+				data: { search : request, category: $('#search_category').val(), category_id: $('.category_id_search').val() ,lang :  window.lang , type : $('#search_type').val() },
 				dataType: 'json',
 				success: function(json) {
 					response($.map(json, function(item) {
@@ -182,23 +188,68 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		},
 		minLength: 0,
 		select: function (event, ui) {
+			window.ui_autocomplete_cl = false;
 			if(ui.item.quantity == 'no'){
 				categoryClick(ui.item.id);
 			}else{
 				attributeForm(ui.item.id,'true');
 			}
 
-		}
-
+		},
+		close: function (event, ui) {
+			window.ui_autocomplete_cl = false;
+			//console.log('close');
+		},
+		change: function (event, ui) {
+              //$(this).autocomplete('close').blur();
+			  //console.log('change');
+        }
 	}).data("ui-autocomplete")._renderItem = function(ul, item) {
 		if(item.quantity == 'no'){
 			return $("<li>").data("ui-autocomplete-item", item).
 			append('<a><img src="'+ item.image +'" 	onerror='+default_img+' alt="" width="50px"><span class="category_auto">' + item.category_name + "</span>" + ' - ' + item.label + '</a>').
 			appendTo(ul);
 			} else {
-			var res = $("<li>").data("ui-autocomplete-item", item).
+			/*var res = $("<li>").data("ui-autocomplete-item", item).
 			append('<a><img src="'+ item.image +'" 	onerror='+default_img+' alt="" width="50px"><span class="category_auto">' + item.category_name + "</span>" + ' - ' + item.label + ' - ' + item.sku + '</a>').
 			appendTo(ul);
+			*/
+			var res = $("<li>").data("ui-autocomplete-item", item).
+			append('<a><img src="'+ item.image +'" 	onerror='+default_img+' alt="" width="50px"><span class="category_auto">' + item.category_name + "</span>" + ' - ' + item.label + ' - ' + item.sku + '</a>')
+			res.bind("dragstart", onstartdrag);
+			res.attr('data-id', item.id);
+			res.attr({draggable: 'true'});
+			//res.draggable();
+			res.appendTo(ul);
+			if (ul.attr('patched') != '1') {
+				//debugger;
+				ul.attr('patched', '1');
+				$('#job_product_search').off('blur').on('blur', function(e) {
+					 //console.log('blur'); 
+					 if(!window.ui_autocomplete_cl) {
+						$('ul.ui-autocomplete').hide(); 
+						window.ui_autocomplete_cl = false;
+					}
+				});
+				
+				$('ul.ui-autocomplete').unbind("mousedown");
+				$('ul.ui-autocomplete').bind("mousedown",  function(e) {
+						//e.preventDefault();
+						//e.stopPropagation(); 
+						window.ui_autocomplete_cl = true; 
+						//console.log('mousedown')
+					}
+				);
+				//$('ul.ui-autocomplete').unbind("mouseup");
+				$('ul.ui-autocomplete').bind("mouseup",  function(e) {
+						//e.preventDefault();
+						//e.stopPropagation(); 
+						window.ui_autocomplete_cl = false; 
+						$('#job_product_search').autocomplete('close');
+					}
+				);
+			}
+			
 			/* если ul - не хочет начинать драгить, если ol сделать - то драг начинается но уже список не так себя ведет
 			$('ul.ui-autocomplete li').attr({draggable: "true"});
 			$('ul.ui-autocomplete li').bind("dragstart", onstartdrag);
@@ -221,7 +272,7 @@ $('ul.products li').bind("dragstart", onstartdrag);
 		$('.productTitle.find_product').removeClass('find_product');
 		$(this).find('.productTitle').addClass('find_product');
 	//	$('.productTitle.find_product').eq(0).trigger('click');
-	})
+	});
 
 	$(document).on('click','.create-category',function(){
 		var type = $(this).data('type');
@@ -281,6 +332,19 @@ $('ul.products li').bind("dragstart", onstartdrag);
 	$('.disclose').attr('title','Click to show/hide children');
 	$('.deleteMenu').attr('title', 'Click to delete item.');
 
+  $(document).on('change', '.category_id_search', function() {
+    
+    if ( $(this).prop('checked') ){
+
+      $(this).val( current_category );
+
+    } else {
+
+      $(this).val( "*" );
+      
+    }
+
+  })
 	/**
 	 * обработчик сворачивания/разворачивания дерева
 	 */
@@ -289,7 +353,21 @@ $('ul.products li').bind("dragstart", onstartdrag);
         var id = this.id;
 
         $(this).closest('li').toggleClass('mjs-nestedSortable-collapsed').toggleClass('mjs-nestedSortable-expanded');
-		$(this).toggleClass('ui-icon-plusthick').toggleClass('ui-icon-minusthick');
+        $(this).toggleClass('ui-icon-plusthick').toggleClass('ui-icon-minusthick');
+
+        
+        $('body').find('div.selected').removeClass('selected');
+
+        //для поиска по каталогу записываем id раскрытой папки
+        if( $(this).hasClass('ui-icon-minusthick') ){
+          current_category = id ;
+          $('.category_id_search').prop('checked') ? $('.category_id_search').val( id ) : $('.category_id_search').val( '*' );
+          $(this).closest('div').addClass('selected');
+        } else {
+          current_category = '*' ;
+          $('.category_id_search').val( '*' );
+          $(this).closest('div').removeClass('selected');
+        }
 
         var that = $('#menuDiv_'+id);
         if (!this.hasAttribute("childLoaded")) {

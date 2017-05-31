@@ -11,7 +11,8 @@ class SphinxModel extends db_sphinx{
     {
         $search = trim($data['search']['term']);
         $select = '*';
-        $limit = 15;
+        //$limit = 15;
+		$limit = 5000;
 
         if (!empty($select)) {
             try {
@@ -25,9 +26,11 @@ class SphinxModel extends db_sphinx{
                     $products->where('type', '!=', 0);
                 }
 
-//                $products->limit($limit);
+                $products->limit($limit);
+				$products->option('max_matches', $limit);
 
                 $result = $products->execute();
+				//var_dump($this->getSphinxResultOrNull($result));
 
                 return $this->getSphinxResultOrNull($result);
             } catch (DatabaseException $e) {
@@ -42,7 +45,8 @@ class SphinxModel extends db_sphinx{
     {
         $search = trim($data['search']['term']);
         $select = '*';
-        $limit = 5;
+        //$limit = 5;
+		$limit = 500;
 
         try {
             $categories = SphinxQL::create($this->sphinx)->select($select)
@@ -56,10 +60,12 @@ class SphinxModel extends db_sphinx{
             if(isset($data['type']) && $data['type'] == '1'){
                 $categories->where('type', '!=', 0);
             }
-//            $categories->limit($limit);
+            $categories->limit($limit);
+			$categories->option('max_matches', $limit);
+
 
             $result = $categories->execute();
-
+//var_dump($this->getSphinxResultOrNull($result));
             return $this->getSphinxResultOrNull($result);
         } catch (DatabaseException $e) {
             echo $e->getMessage();

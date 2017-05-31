@@ -975,7 +975,6 @@ class model extends db_pdo{
     {
 
     $response = array();
-
     foreach ($ids as $product_id) {
       $sql_1 = "SELECT
                 *,

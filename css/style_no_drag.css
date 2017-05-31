@@ -822,3 +822,11 @@ li.sertf{
     font: 14px Arial, Helvetica, sans-serif;
     font-weight: bold;
 }
+div .category_id_search{
+    margin-left: 15px;
+}
+
+div .selected{
+  border: 1px solid #98D337;
+  border-radius: 0;
+}
