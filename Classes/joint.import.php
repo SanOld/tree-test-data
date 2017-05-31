@@ -339,8 +339,8 @@ class Import extends model {
               $data['vendor_photo_link'] = $offer->picture;
               $data['local_photo_link'] = $offer->picture;
               $data['quantity'] = '';
-              $data['attributes'] = '';
-              $data['additional_materials'] = '';
+              $data['attributes'] = $offer->model ? $offer->model : '';
+              $data['additional_materials'] = $offer->sales_notes ? $offer->sales_notes : '';
               $data['name'] = $offer->name;
               $data['vendor'] = $offer->vendor . " : " . $offer->vendorCode;
               $data['description'] = $offer->description;
@@ -364,6 +364,10 @@ class Import extends model {
       switch ( $price['name'] ) {
         case 'Axiomplus':
           return  $this->importDataAxiomplus($price);
+
+          break;
+        case 'EKF':
+          return  $this->importDataAxiomplus($price);//поля не парсятся delivery, pickup, outlets
 
           break;
 

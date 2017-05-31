@@ -568,9 +568,11 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			var additional_materials = '<span>'+ i18next.t('tree_addinfo') +'</span><p>'+data.product.additional_materials+'</p>';
 			additional_materials += '<span>'+ i18next.t('tree_sertificats') + '</span><p>'+data.product.certificates+'</p>';
 			var img = '<img width="200px" src="'+data.product.vendor_photo_link+'" onerror='+default_img+' ><p>'+ description + '</p>';
-			var rowData = {
-				'attributes' : data.product.attributes.split('::')
-			};
+      if( data.product.attributes ){
+        var rowData = { 'attributes' : data.product.attributes.split('::') };
+      } else {
+        var rowData = { 'attributes' : '' };
+      }
       var price_block = '<span>Цена: </span><p><a href="'+data.product.vendor_link+'" target="_blank">' + data.product.price + " " + data.product.currency +'</a></p>';
 
 			var components = '<p>' + i18next.t('tree_complect') + '</p><ul>';
@@ -1776,7 +1778,8 @@ function handlebarsHelpers(){
 		items.map(function(item) {
 			row = item.split(':');
 
-			out += '<tr><td>' + row[0] + '</td><td>' + row[1] + '</td></tr>';
+			out += '<tr><td>' + row[0] + '</td><td>' + (row[1] ? row[1] : '') + '</td></tr>';
+
 		});
 
 		return out;
