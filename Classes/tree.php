@@ -48,7 +48,7 @@ class Tree extends model{
 				//	$productText = '<span >' .$products_count . '</span>';
 				//}else{
 					$catImg = '';
-					$productText = '<span data-id="' . $cat['category_id'] .'" data-find_category_id="' . $cat['category_id'] .'" class="itemTitle">' . $cat['name'] . ' ' . $products_count . '</span>';
+					$productText = '<span data-id="' . $cat['category_id'] .'" data-find_category_id="' . $cat['category_id'] .'" data-url_visible="' . $cat['url_visible'] .'" class="itemTitle">' . $cat['name'] . ' ' . $products_count . '</span>';
 				//}
 
 				$tree .= '<li style="display: '. ( isset($cat['has_product']) ? "list-item" : "none" ) .';" class="mjs-nestedSortable-branch mjs-nestedSortable-collapsed" id="menuItem_' . $cat['category_id'] .'" data-foo="bar">';
@@ -458,6 +458,13 @@ class Tree extends model{
 		$json = $this->saveCustomData($field_id, $title, $user);
 
 		return json_encode($json); 
+  }
+
+  public function save_host($category_id, $url_visible){
+
+		$result = $this->saveHost($category_id, $url_visible);
+
+		return $result;
   }
 
 

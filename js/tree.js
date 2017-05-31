@@ -320,6 +320,18 @@ $('ul.products li').bind("dragstart", onstartdrag);
           $('.category_id_search').val( '*' );
           $(this).closest('div').removeClass('selected');
         }
+        
+        //
+        if( $(this).hasClass('ui-icon-minusthick') ){
+          var val = $('span [data-find_category_id =' +id + ']').attr('data-url_visible');
+          $('input.url_visible').val( val );
+          $('input.category_id').val( id );
+        } else {
+          $('input.url_visible').val( '' );
+          $('input.category_id').val( '' );
+        }
+
+
 
         var that = $('#menuDiv_'+id);
         if (!this.hasAttribute("childLoaded")) {
@@ -1540,6 +1552,54 @@ $('ul.products li').bind("dragstart", onstartdrag);
 			});
 		});
 	}
+
+
+  	/**
+	 * сохранение хостов просмотра для категории
+	 */
+	$(document).on('submit', '#url_visible', function(e){
+		e.preventDefault();
+
+		var category_id = $(this).find(".category_id");
+    var url_visible = $(this).find(".url_visible");
+
+    if(category_id.val() != ''){
+
+      $('#url_visible').before('<img id="imgLoader" src="/img/loading1.gif">');
+
+      var filedata = new FormData;
+      filedata.append('category_id', category_id.val());
+      filedata.append('url_visible', url_visible.val());
+
+			$.ajax({
+				url: 'index.php?saveHost=true',
+				data: filedata,
+				processData: false,
+				contentType: false,
+				type: 'post',
+//				dataType: 'json',
+				success: function (data) {
+          window.console.log(data);
+
+					if(data){
+            alert('Данные сохранены');
+            var val = $('span [data-find_category_id =' +category_id.val() + ']').attr('data-url_visible', url_visible.val() );
+					}else{
+            errors('Ошибка при загрузке данных');
+					}
+
+          $(document).find('#imgLoader').remove();
+
+				},
+				error: function(){
+          $(document).find('#imgLoader').remove();
+					errors('Ошибка при загрузке данных');
+				}
+			});
+    }
+
+	});
+
 
 
 	/**

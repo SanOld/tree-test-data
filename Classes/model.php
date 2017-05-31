@@ -457,10 +457,15 @@ class model extends db_pdo{
 		if ($type == 0) {	
 		    if ($_SERVER['HTTP_HOST'] == 'cad5d.com.ua' || $_SERVER['HTTP_HOST'] == 'widgets.online.cableproject.net' || 
 		         $_SERVER['HTTP_HOST'] == 'widgets.online.cad5d.com.ua' || $_SERVER['HTTP_HOST'] == 'tree-test-data') {
-		            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'"  ORDER BY `order`';
+		            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products, ct.url_visible FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'"  ORDER BY `order`';
 		        } else {
-		            $name = 'axiomplus';
-		            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products FROM category as ct WHERE type = "'.$type.'" AND language = "'.$lang.'" AND name <> "'.$name.'" ORDER BY `order`';
+
+		            $sql = 'SELECT ct.category_id, ct.parent_id, ct.name, ct.image,ct.count_products, ct.url_visible FROM category as ct
+                        WHERE type = "'.$type.'" AND language = "'.$lang.'"
+                        AND  ( SELECT url_visible FROM category WHERE category_id = ct.root_category ) LIKE "%'.$_SERVER['HTTP_HOST'].'%"
+                        OR ct.url_visible LIKE "%'.$_SERVER['HTTP_HOST'].'%"
+                        ORDER BY `order`';
+                
 		        }
 		}
 		else
@@ -680,6 +685,11 @@ class model extends db_pdo{
         }
 
         return true;
+    }
+
+    public function saveHost($category_id, $url_visible){
+      $result = $this->db->query("UPDATE `category` SET `url_visible` = '".$url_visible."' WHERE `category_id` = ".$category_id);
+      return $result ? true: false;
     }
 
     /**

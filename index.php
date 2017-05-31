@@ -229,7 +229,19 @@ for ($i = 1; $i < count($x1); $i++)
         </select>
         <input type="submit" class="button" value="Обновить данные">
     </form>
-  <?php } ?> 
+  <?php } ?>
+
+    <?php { ?>
+
+    <form action="" method="post" class="setting_form " id="url_visible">
+        <label for="">Хосты</label>
+        <input type="text" class="url_visible" value="">
+        <input type="text" class="category_id" value="" style = "display: none;">
+        <input type="submit" class="button" value="Сохранить">
+<!--    </form>-->
+  
+  <?php } ?>
+
   
   <div><label for="">Переключение языка</label>
     <select name="" id="change_language">

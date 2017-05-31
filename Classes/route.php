@@ -140,5 +140,7 @@ if (!empty($_GET['update'])){
 }else if (isset($_GET['addItemToDictionary'])){
     echo $tree_html->add_item_to_dictionary($_POST['field_id'],$_POST['title'], $_POST['user_id']);
     exit;
+}else if (isset($_GET['saveHost'])){
+    echo $tree_html->save_host($_POST['category_id'],$_POST['url_visible']);
+    exit;
 }
-
