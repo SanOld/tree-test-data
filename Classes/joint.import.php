@@ -261,6 +261,9 @@ class Import extends model {
     }
     
     public function importDataAxiomplus($price){
+
+      //получаем разрешения для корневой категории
+      $url_visible = $this->getUrlPermissions( $price['id'] );
       
       $lang = 'ru';
       $this->deleteDataByPriceId($price['id'], $lang);
@@ -323,7 +326,7 @@ class Import extends model {
         if($out){
           $doc = new SimpleXMLElement($out);
           $categories = array();
-            $id_root = $this->addCategoryFromXML(0, 0, $price['name'] , 'ru', $price['id'], $price['id']);
+            $id_root = $this->addCategoryFromXML(0, 0, $price['name'] , 'ru', $price['id'], $price['id'], $url_visible);
             foreach ($doc->shop->categories->category as $category) {
                 $id = $this->addCategoryFromXML($id_root, $id_root, $category , 'ru', $category->attributes()->id, $price['id']);
                 $categories[$category->attributes()->id->__toString()] = $id;

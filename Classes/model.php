@@ -108,9 +108,9 @@ class model extends db_pdo{
       return $category_id;
     }
     
-    public function addCategoryFromXML($root_category, $parent_id, $name,$lang,$sku, $price_id){
+    public function addCategoryFromXML($root_category, $parent_id, $name,$lang,$sku, $price_id, $url_visible = ''){
 
-        $sql = "INSERT INTO category SET `root_category` ='".$root_category."', `parent_id` ='".$parent_id."', `name` ='".$name."' ,`language` = '".$lang."',`sku` ='".$sku."',`price_id` ='".$price_id."'";
+        $sql = "INSERT INTO category SET `root_category` ='".$root_category."', `parent_id` ='".$parent_id."', `name` ='".$name."' ,`language` = '".$lang."',`sku` ='".$sku."',`price_id` ='".$price_id."',`url_visible` ='".$url_visible."'";
 
         $result = $this->db->query( $sql );
 
@@ -1089,5 +1089,12 @@ class model extends db_pdo{
     }
     return $categories;
   }
+
+  public function getUrlPermissions( $price_id )
+    {
+       $result = $this->db->query('SELECT url_visible FROM category WHERE price_id = '.$price_id.' AND root_category = 0 AND parent_id = 0');
+       $result = $this->getResultOrNull($result, true);
+        return $result ? $result[url_visible] : '';
+    }
 
 } ?>
