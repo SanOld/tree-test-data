@@ -328,8 +328,18 @@ class Import extends model {
           $categories = array();
             $id_root = $this->addCategoryFromXML(0, 0, $price['name'] , 'ru', $price['id'], $price['id'], $url_visible);
             foreach ($doc->shop->categories->category as $category) {
-                $id = $this->addCategoryFromXML($id_root, $id_root, $category , 'ru', $category->attributes()->id, $price['id']);
+
+                if( isset( $category->attributes()->parentId ) ){
+
+                  $parent_id = $this->selectCategoryIdBySku($id_root, $category->attributes()->parentId );
+                  $id = $this->addCategoryFromXML($id_root, $parent_id, $category , 'ru', $category->attributes()->id, $price['id']);
+                  
+                } else {
+                  $id = $this->addCategoryFromXML($id_root, $id_root, $category , 'ru', $category->attributes()->id, $price['id']);
+                }
+                
                 $categories[$category->attributes()->id->__toString()] = $id;
+
             }
           
           foreach ($doc->shop->offers->offer as $offer) {
@@ -360,6 +370,7 @@ class Import extends model {
         
       }
     }
+
     public function importDataXML($price_id){
       
       $price = $this->getPrice($price_id);

@@ -68,6 +68,14 @@ class model extends db_pdo{
         $result = $this->db->query("SELECT category_id, name,parent_id FROM category WHERE category_id = ".$id);
         return $this->getResultOrNull($result, true);
     }
+
+    public function  selectCategoryIdBySku($root_id, $sku){
+
+        $result = $this->db->query("SELECT category_id FROM category WHERE root_category = ".$root_id." AND sku = ".$sku);
+        $result = $this->getResultOrNull($result, true);
+        return $result ? $result['category_id'] : $result;
+
+    }
     
     public function getPricesAll(){
         $result = $this->db->query("SELECT * FROM prices");
@@ -108,8 +116,13 @@ class model extends db_pdo{
       return $category_id;
     }
     
-    public function addCategoryFromXML($root_category, $parent_id, $name,$lang,$sku, $price_id, $url_visible = ''){
+    public function addCategoryFromXML($root_category, $parent_id = null, $name,$lang,$sku, $price_id, $url_visible = ''){
+        if( ! $parent_id ){
 
+          $parent_id = $root_category;
+
+        }
+        
         $sql = "INSERT INTO category SET `root_category` ='".$root_category."', `parent_id` ='".$parent_id."', `name` ='".$name."' ,`language` = '".$lang."',`sku` ='".$sku."',`price_id` ='".$price_id."',`url_visible` ='".$url_visible."'";
 
         $result = $this->db->query( $sql );
