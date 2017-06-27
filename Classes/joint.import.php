@@ -371,6 +371,70 @@ class Import extends model {
       }
     }
 
+    public function importDataNOVIcam($price){
+
+      //получаем разрешения для корневой категории
+      $url_visible = $this->getUrlPermissions( $price['id'] );
+
+      $lang = 'ru';
+      $this->deleteDataByPriceId($price['id'], $lang);
+
+
+      if( $curl = curl_init() ) {
+        curl_setopt($curl, CURLOPT_URL, $price['link']);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($_POST));
+        $out = curl_exec($curl);
+        curl_close($curl);
+
+
+        if($out){
+          $doc = new SimpleXMLElement($out);
+          $categories = array();
+          $id_root = $this->addCategoryFromXML(0, 0, $price['name'] , 'ru', $price['id'], $price['id'], $url_visible);
+
+          foreach ($doc->channel->item as $item) {
+
+            foreach ($item->product_type as $category_name) {
+
+              $category = $this->checkCategory($category_name, $id_root);
+              if( $category ){
+                $id = $category[0]['category_id'];
+              } else {
+                $id = $this->addCategoryFromXML($id_root, $id_root, $category_name , 'ru', 0, $price['id']);
+              }
+
+              $data = array();
+              $data['category_id'] = $id;
+              $data['vendor'] = $item->brand;
+              $data['vendor_link'] = $item->link;
+//              $data['vendor_category'] = 10;
+//              $data['sku'] = $offer->vendorCode;
+              $data['vendor_photo_link'] = $item->image_link->image1;
+              $data['local_photo_link'] = $item->image_link->image2;
+//              $data['quantity'] = '';
+//              $data['attributes'] = '';
+//              $data['additional_materials'] = '';
+              $data['name'] = $item->title;
+//              $data['description'] = '';
+              $data['price'] = $item->price;
+//              $data['currency'] = 'RUB';
+
+              $this->addProductFromXML($data, $lang, $categories);
+
+            }
+
+          }
+
+          return true;
+        } else {
+          return $out;
+        }
+
+      }
+    }
+
     public function importDataXML($price_id){
       
       $price = $this->getPrice($price_id);
@@ -382,6 +446,10 @@ class Import extends model {
           break;
         case 'EKF':
           return  $this->importDataAxiomplus($price);//поля не парсятся delivery, pickup, outlets
+
+          break;
+        case 'NOVIcam':
+          return  $this->importDataNOVIcam($price);//поля не парсятся delivery, pickup, outlets
 
           break;
 
